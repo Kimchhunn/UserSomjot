@@ -12,8 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +31,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InfoActivity extends AppCompatActivity {
@@ -44,6 +49,12 @@ public class InfoActivity extends AppCompatActivity {
 
     public static String docRef = null;
 
+    private ListView list;
+
+//    List<String> data = new ArrayList<>();
+
+    private Button addNewVehBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +62,21 @@ public class InfoActivity extends AppCompatActivity {
 
         balance = findViewById(R.id.info_bal);
 
+        list = findViewById(R.id.info_veh_list_view);
+
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         user_id = firebaseAuth.getCurrentUser().getUid();
 
+        addNewVehBtn = findViewById(R.id.add_veh_btn);
+
         Toast.makeText(this, firebaseAuth.getUid(), Toast.LENGTH_SHORT).show();
 
+//        populateListView();
+        getVehicleList();
+        registerClickCallBack();
 //        firebaseFirestore.collection("users")
 //                .get()
 //                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -95,6 +114,13 @@ public class InfoActivity extends AppCompatActivity {
                     }
                 }
             });
+
+        addNewVehBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendToAddVehicle();
+            }
+        });
 
 //        Map<String, Float> userMap = new HashMap<>();
 //        float amt = 10000;
@@ -140,6 +166,52 @@ public class InfoActivity extends AppCompatActivity {
 //                    });
 //        }
 
+    }
+
+    private void sendToAddVehicle() {
+        Intent addNewVehIntent = new Intent(this, AddVehicleActivity.class);
+        startActivity(addNewVehIntent);
+    }
+
+    private void registerClickCallBack() {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView textView = (TextView) view;
+                Toast.makeText(InfoActivity.this, textView.getText().toString() + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void populateListView(List<String> myVeh) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.list_view_item, myVeh);
+        list.setAdapter(adapter);
+     }
+
+    private void getVehicleList() {
+        final List<String> list = new ArrayList<>();
+        if (user_id != null) {
+            firebaseFirestore.collection("users")
+                    .document(user_id)
+                    .collection("vehicle")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    String a = document.getData().get("name").toString();
+                                    list.add(a);
+                                    populateListView(list);
+                                }
+                            } else {
+                                Toast.makeText(InfoActivity.this, "(FIRESTORE Error) : "
+                                        + task.getException(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
 //    private void storeFirestore(@NonNull Task<UploadTask.TaskSnapshot> task) {

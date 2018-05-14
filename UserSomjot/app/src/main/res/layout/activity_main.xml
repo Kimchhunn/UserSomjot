@@ -36,13 +36,15 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="250dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="40dp"
+        android:layout_width="322dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="80dp"
+        android:background="@drawable/shape_around_selection"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/shape_around_selection"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/main_check_bal_btn"
@@ -63,20 +65,6 @@
         android:text="Map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-    <Button
-        android:id="@+id/add_veh_btn"
-        android:layout_width="54dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
-        android:background="@color/colorPrimary"
-        android:text="Add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/spinner"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
