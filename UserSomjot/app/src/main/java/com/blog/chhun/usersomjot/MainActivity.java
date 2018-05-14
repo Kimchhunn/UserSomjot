@@ -200,24 +200,26 @@ public class MainActivity extends AppCompatActivity {
     private List<String> getVehicleList() {
         final List<String> list = new ArrayList<String>();
         final String[] veh = new String[100];
-        firebaseFirestore.collection("users")
-                .document(user_id)
-                .collection("vehicle")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                String a = document.getData().get("name").toString();
-                                list.add(a);
+        if (user_id != null) {
+            firebaseFirestore.collection("users")
+                    .document(user_id)
+                    .collection("vehicle")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    String a = document.getData().get("name").toString();
+                                    list.add(a);
+                                }
+                            } else {
+                                Toast.makeText(MainActivity.this, "(FIRESTORE Error) : "
+                                        + task.getException(), Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(MainActivity.this, "(FIRESTORE Error) : "
-                                    + task.getException(), Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+                    });
+        }
         return list;
     }
 
